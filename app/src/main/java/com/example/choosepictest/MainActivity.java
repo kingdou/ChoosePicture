@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
     public static final int TAKE_PHOTO=1;
     public static final int CROP_PHOTO=2;
     private Uri imageUri;
+    private Button button1;
 
 
     @Override
@@ -49,7 +50,28 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(intent, TAKE_PHOTO);
             }
         });
-
+        button1 = (Button)findViewById(R.id.choose_photo);
+        button1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                File outputImage = new File(Environment.getExternalStorageDirectory(),"output_image.jpg");
+                if (outputImage.exists()){
+                    outputImage.delete();
+                }
+                try {
+                    outputImage.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                imageUri = Uri.fromFile(outputImage);
+                Intent intent = new Intent("android.intent.action.GET_CONTENT");
+                intent.putExtra("crop",true);
+                intent.putExtra("scale",true);
+                intent.setType("image/*");
+                intent.putExtra(MediaStore.EXTRA_OUTPUT,imageUri);
+                startActivityForResult(intent , CROP_PHOTO);
+            }
+        });
     }
 
     @Override
